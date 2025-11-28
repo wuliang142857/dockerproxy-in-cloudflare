@@ -1,0 +1,53 @@
+请帮我在这个目录下初始化一个cloudflare的项目，worker代码：
+export default {
+    async fetch(request) {
+        const url = new URL(request.url);
+        const path = url.pathname;
+        
+        // 定义不同仓库的代理地址
+        const registries = {
+            // Google Container Registry (gcr.io)
+            'gcr': 'https://lqwtczuyxfaw.ap-northeast-1.clawcloudrun.com',
+            // GitHub Container Registry (ghcr.io)
+            'ghcr': 'https://cykwroxgtjha.ap-northeast-1.clawcloudrun.com',
+            // Kubernetes Container Registry (registry.k8s.io)
+            'k8s': 'https://poztndedtemn.ap-northeast-1.clawcloudrun.com',
+            // Docker Hub (默认)
+            'docker': 'https://jghapxhongqm.ap-northeast-1.clawcloudrun.com',
+        };
+        
+        let targetUrl;
+        let actualPath = path;
+        
+        // 根据路径前缀判断仓库类型
+        if (path.startsWith('/gcr/')) {
+            targetUrl = registries.gcr;
+            actualPath = path.replace('/gcr', '');
+        } else if (path.startsWith('/v2/ghcr.io/')) {
+            targetUrl = registries.ghcr;
+            // actualPath = path.replace('/v2', '');
+        } else if (path.startsWith('/k8s/')) {
+            targetUrl = registries.k8s;
+            actualPath = path.replace('/k8s', '');
+        } else {
+            // 默认使用 Docker Hub
+            targetUrl = registries.docker;
+        }
+        
+        // 构建完整的目标URL
+        const proxyUrl = targetUrl + actualPath + url.search;
+        console.log(`Proxying request to: ${proxyUrl}`);
+        
+        // 创建代理请求
+        const proxyRequest = new Request(proxyUrl, {
+            method: request.method,
+            headers: request.headers,
+            body: request.body,
+        });
+        
+        // 转发请求并返回响应
+        return fetch(proxyRequest);
+    },
+};
+
+worker在我的cloudflare已有有了：dockerhub

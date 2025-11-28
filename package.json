@@ -1,0 +1,22 @@
+{
+  "name": "dockerhub",
+  "version": "1.0.0",
+  "description": "Cloudflare Worker for proxying Docker registries",
+  "main": "src/index.js",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "start": "wrangler dev"
+  },
+  "keywords": [
+    "cloudflare",
+    "worker",
+    "docker",
+    "proxy"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}
